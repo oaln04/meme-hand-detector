@@ -6,7 +6,7 @@ This recreates the simple TikTok-style project where a hand sign controls which 
 
 ## Demo
 
-![Meme Hand Detector demo](assets/memes/demo.png)
+![Meme Hand Detector demo](assets/readme/demo.png)
 
 ## Tech stack
 
@@ -21,7 +21,7 @@ This recreates the simple TikTok-style project where a hand sign controls which 
 - Named gesture detection for bite, thumb, zero, one, two, three, four, and five
 - Separate display windows for Output and Webcam
 - Clean output image fitting that preserves each image's shape
-- Smoothing to reduce flickering between gestures
+- Confirmed-frame smoothing to reduce flickering between gestures
 - Screenshot capture with one keypress
 - Replaceable image assets for custom memes
 
@@ -35,7 +35,7 @@ meme-hand-detector/
 ├── LICENSE
 ├── .gitignore
 ├── assets/
-│   └── memes/
+│   ├── memes/
 │       ├── bite.png
 │       ├── thumb.png
 │       ├── no_hand.png
@@ -45,6 +45,10 @@ meme-hand-detector/
 │       ├── three.png
 │       ├── four.png
 │       └── five.png
+│   └── readme/
+│       └── demo.png
+├── tests/
+│   └── test_gesture_classifier.py
 └── screenshots/
 ```
 
@@ -126,10 +130,18 @@ Change display size:
 python app.py --width 720 --height 540
 ```
 
-Increase/decrease gesture smoothing:
+Increase/decrease gesture smoothing. Lower values switch faster; higher values are steadier:
 
 ```bash
-python app.py --history 12
+python app.py --history 4
+```
+
+## Testing
+
+Run the gesture classifier checks:
+
+```bash
+python -m unittest discover -s tests
 ```
 
 ## How it works
@@ -137,8 +149,9 @@ python app.py --history 12
 1. OpenCV reads frames from the webcam.
 2. MediaPipe detects hand landmarks.
 3. The app checks for special bite and thumb gestures first.
-4. If neither special gesture is found, the raised-finger count becomes the gesture value.
-5. The app displays the image mapped to that gesture.
+4. If neither special gesture is found, the raised-finger count becomes the gesture value, including a thumb only when it is clearly spread.
+5. A small smoother confirms the same gesture across consecutive frames before switching the output.
+6. The app displays the image mapped to that gesture.
 
 ## Portfolio notes
 

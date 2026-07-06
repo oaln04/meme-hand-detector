@@ -14,4 +14,6 @@ Expected image mapping:
 - `four.png` -> 4 fingers
 - `five.png` -> open hand / 5 fingers
 
+A clearly spread thumb counts as one of the fingers. A folded thumb does not.
+
 `.jpg`, `.jpeg`, and `.webp` also work.
