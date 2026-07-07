@@ -12,6 +12,7 @@ Controls:
 from __future__ import annotations
 
 import argparse
+import time
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
@@ -81,10 +82,12 @@ class HandGestureDetector:
         results = self.hands.process(frame_rgb)
 
         if not results.multi_hand_landmarks:
-            return None, annotated
+            return None, 0.0, annotated
 
         hand_landmarks = results.multi_hand_landmarks[0]
-        handedness = results.multi_handedness[0].classification[0].label
+        handedness_data = results.multi_handedness[0].classification[0]
+        handedness = handedness_data.label
+        confidence = handedness_data.score
 
         self.mp_draw.draw_landmarks(
             annotated,
@@ -93,7 +96,7 @@ class HandGestureDetector:
         )
 
         gesture = self._classify_gesture(hand_landmarks.landmark, handedness)
-        return gesture, annotated
+        return gesture, confidence, annotated
 
     @staticmethod
     def _classify_gesture(landmarks, handedness: str) -> str:
@@ -303,6 +306,47 @@ def add_header(
     cv2.putText(header, text, (20, 34), LABEL_FONT, LABEL_SCALE, (255, 255, 255), LABEL_THICKNESS, cv2.LINE_AA)
     return np.vstack((header, frame))
 
+def add_stats_overlay(frame: np.ndarray, fps: float, confidence: float) -> np.ndarray:
+    """Adds FPS and MediaPipe hand confidence to the webcam frame."""
+    x = 20
+    y = frame.shape[0] - 70
+
+    font = cv2.FONT_HERSHEY_DUPLEX
+    font_scale = 0.6
+    thickness = 1
+    text_color = (255, 255, 255)
+    bg_color = (20, 20, 20)
+    accent_color = (92, 214, 142)
+
+    fps_text = f"FPS: {fps:.1f}"
+    confidence_text = f"Hand confidence: {confidence * 100:.1f}%"
+
+    cv2.rectangle(frame, (x - 10, y - 28), (x + 310, y + 48), bg_color, -1)
+    cv2.rectangle(frame, (x - 10, y - 28), (x - 4, y + 48), accent_color, -1)
+
+    cv2.putText(
+        frame,
+        fps_text,
+        (x, y),
+        font,
+        font_scale,
+        text_color,
+        thickness,
+        cv2.LINE_AA,
+    )
+
+    cv2.putText(
+        frame,
+        confidence_text,
+        (x, y + 32),
+        font,
+        font_scale,
+        text_color,
+        thickness,
+        cv2.LINE_AA,
+    )
+
+    return frame
 
 def build_display_frames(meme: np.ndarray, camera: np.ndarray, gesture_text: str) -> Tuple[np.ndarray, np.ndarray]:
     """Creates the separate output and webcam views."""
@@ -359,6 +403,8 @@ def main() -> None:
     print("Running. Press q or ESC to quit. Press s to save a screenshot.")
 
     last_display = None
+    prev_time = time.time()
+    fps = 0.0
     try:
         while True:
             success, frame = cap.read()
@@ -366,11 +412,18 @@ def main() -> None:
                 break
 
             frame = cv2.flip(frame, 1)
-            gesture, annotated_frame = detector.detect(frame)
+            gesture, confidence, annotated_frame = detector.detect(frame)
+            current_time = time.time()
+            delta_time = current_time - prev_time
+            prev_time = current_time
+            if delta_time > 0:
+                fps = 1.0 / delta_time
             gesture_value = "no_hand" if gesture is None else gesture
             stable_gesture = smoother.update(gesture_value)
 
             gesture_text = GESTURE_NAMES.get(stable_gesture, f"{stable_gesture} fingers")
+            annotated_frame = add_stats_overlay(annotated_frame, fps, confidence)
+
             output_frame, webcam_frame = build_display_frames(
                 meme_images[stable_gesture],
                 annotated_frame,
