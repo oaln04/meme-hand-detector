@@ -2,9 +2,9 @@
 
 A lightweight Python computer-vision project that uses your webcam to detect hand gestures and display a matching image beside the camera feed.
 
-## Demo
+## demo
 
-![Meme Hand Detector demo](assets/readme/demo.png)
+![Meme Hand Detector demo](assets/readme/demo.gif)
 
 ## stack
 
