@@ -1,21 +1,17 @@
-# Meme Hand Gesture Detector
+# cr7 gesture detector
 
-A lightweight Python computer-vision project that uses your webcam to detect hand gestures and display a matching meme/image beside the camera feed.
-
-This recreates the simple TikTok-style project where a hand sign controls which image appears on screen.
+A lightweight Python computer-vision project that uses your webcam to detect hand gestures and display a matching image beside the camera feed.
 
 ## Demo
 
 ![Meme Hand Detector demo](assets/readme/demo.png)
 
-## Tech stack
+## stack
 
-- Python
-- OpenCV
-- MediaPipe Hands
-- NumPy
+**Core:** Python, OpenCV, MediaPipe
+**Supporting:** NumPy, Pillow
 
-## Features
+## features
 
 - Real-time webcam hand tracking
 - Named gesture detection for bite, thumb, zero, one, two, three, four, and five
@@ -23,36 +19,9 @@ This recreates the simple TikTok-style project where a hand sign controls which 
 - Clean output image fitting that preserves each image's shape
 - Confirmed-frame smoothing to reduce flickering between gestures
 - Screenshot capture with one keypress
-- Replaceable image assets for custom memes
+- Replaceable image assets for custom images
 
-## Project structure
-
-```text
-meme-hand-detector/
-├── app.py
-├── requirements.txt
-├── README.md
-├── LICENSE
-├── .gitignore
-├── assets/
-│   ├── memes/
-│       ├── bite.png
-│       ├── thumb.png
-│       ├── no_hand.png
-│       ├── zero.png
-│       ├── one.png
-│       ├── two.png
-│       ├── three.png
-│       ├── four.png
-│       └── five.png
-│   └── readme/
-│       └── demo.png
-├── tests/
-│   └── test_gesture_classifier.py
-└── screenshots/
-```
-
-## Setup
+## setup
 
 ### 1. Clone the repo
 
@@ -96,7 +65,7 @@ q or ESC  quit
 s         save screenshot to screenshots/demo.png
 ```
 
-## Customizing the meme images
+## customizing images
 
 Replace the files inside `assets/memes/` with your own images.
 
@@ -116,35 +85,7 @@ five.png
 
 You can also use `.jpg`, `.jpeg`, or `.webp`.
 
-## Optional run settings
-
-Use a different webcam:
-
-```bash
-python app.py --camera 1
-```
-
-Change display size:
-
-```bash
-python app.py --width 720 --height 540
-```
-
-Increase/decrease gesture smoothing. Lower values switch faster; higher values are steadier:
-
-```bash
-python app.py --history 4
-```
-
-## Testing
-
-Run the gesture classifier checks:
-
-```bash
-python -m unittest discover -s tests
-```
-
-## How it works
+## how it works
 
 1. OpenCV reads frames from the webcam.
 2. MediaPipe detects hand landmarks.
@@ -153,7 +94,7 @@ python -m unittest discover -s tests
 5. A small smoother confirms the same gesture across consecutive frames before switching the output.
 6. The app displays the image mapped to that gesture.
 
-## Portfolio notes
+## notes
 
 This project demonstrates:
 
@@ -162,11 +103,3 @@ This project demonstrates:
 - Landmark-based gesture recognition
 - Simple UI composition with OpenCV
 - Clean Python project structure
-
-## Next improvements
-
-- Add more gesture details to the Output window
-- Add sound effects per gesture
-- Add a Streamlit web demo
-- Save short demo clips automatically
-- Use custom gestures instead of only finger count
