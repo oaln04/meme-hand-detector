@@ -319,7 +319,11 @@ def add_stats_overlay(frame: np.ndarray, fps: float, confidence: float) -> np.nd
     accent_color = (92, 214, 142)
 
     fps_text = f"FPS: {fps:.1f}"
-    confidence_text = f"Hand confidence: {confidence * 100:.1f}%"
+    confidence_text = (
+        f"Confidence: {confidence * 100:.1f}%"
+        if confidence > 0.0
+        else "No hand detected"
+    )
 
     cv2.rectangle(frame, (x - 10, y - 28), (x + 310, y + 48), bg_color, -1)
     cv2.rectangle(frame, (x - 10, y - 28), (x - 4, y + 48), accent_color, -1)
@@ -374,6 +378,14 @@ def parse_args() -> argparse.Namespace:
     )
     return parser.parse_args()
 
+def get_next_screenshot_path(screenshot_dir: Path) -> Path:
+    index = 1
+    while True:
+        screenshot_path = screenshot_dir / f"demo_{index}.png"
+        if not screenshot_path.exists():
+            return screenshot_path
+        
+        index += 1
 
 def main() -> None:
     args = parse_args()
@@ -439,7 +451,7 @@ def main() -> None:
             if key in (ord("q"), 27):
                 break
             if key == ord("s") and last_display is not None:
-                screenshot_path = screenshot_dir / "demo.png"
+                screenshot_path = get_next_screenshot_path(screenshot_dir)
                 cv2.imwrite(str(screenshot_path), last_display)
                 print(f"Saved screenshot to {screenshot_path}")
     finally:
