@@ -4,9 +4,9 @@ A lightweight Python computer-vision project that uses your webcam to detect han
 
 This recreates the simple TikTok-style project where a hand sign controls which image appears on screen.
 
-## Demo
+## demo
 
-![Meme Hand Detector demo](assets/readme/demo.png)
+![Meme Hand Detector demo](assets/readme/demo.gif)
 
 ## Tech stack
 
