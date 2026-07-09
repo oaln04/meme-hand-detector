@@ -26,8 +26,8 @@ A lightweight Python computer-vision project that uses your webcam to detect han
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/oaln04/meme-hand-detector.git
-cd meme-hand-detector
+git clone https://github.com/oaln04/cr7-gesture-detector.git
+cd cr7-gesture-detector
 ```
 
 ### 2. Create a virtual environment
